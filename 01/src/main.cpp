@@ -3,7 +3,7 @@
 
 int main() {
   std::fstream file("input.txt");
-  int sum1;
+  int sum1 = 0;
   int a;
   while (file >> a) {
     sum1 += a / 3 - 2;
@@ -11,7 +11,7 @@ int main() {
   printf("Part 1: %d\n", sum1);
 
   std::fstream file2("input.txt");
-  int sum2;
+  int sum2 = 0;
   int b;
   while (file2 >> b) {
     int temp_sum = b / 3 - 2;
