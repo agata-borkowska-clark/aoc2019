@@ -29,7 +29,7 @@ int main() {
 	    break;
           case 99:
 	    if (v.at(0) == 19690720) {
-	      printf("%d\n", i * 100 + j);
+	      printf("Part 2: %d\n", i * 100 + j);
 	      return 0;
 	    } else {
 	      current = v.size();
@@ -40,6 +40,9 @@ int main() {
 	    return 1;
 
 	}
+      }
+      if (i == 12 && j == 2) {
+	printf("Part 1: %d\n", v.at(0));
       }
     }
   }
