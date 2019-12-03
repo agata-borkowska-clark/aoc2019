@@ -4,14 +4,16 @@
 #include <vector>
 #include <utility>
 #include <cmath>
+#include <tuple>
+#include <climits>
 
 int main() {
   std::fstream file("input.txt");
-  std::vector<std::pair<int, int>> wire1;
-  std::pair<int, int> start(0, 0);
+  std::vector<std::tuple<int, int, int>> wire1;
+  std::tuple<int, int, int> start(0, 0, 0);
   wire1.push_back(start);
-  std::vector<std::pair<int, int>> wire2;
-  std::pair<int, int> start2(0, 0);
+  std::vector<std::tuple<int, int, int>> wire2;
+  std::tuple<int, int, int> start2(0, 0, 0);
   wire2.push_back(start2);
   char direction;
   int distance;
@@ -19,25 +21,26 @@ int main() {
   do {
     file >> direction >> distance >> delim;
     for (int i = 0; i < distance; ++i) {
-      std::pair<int, int> coords;
+      std::tuple<int, int, int> coords;
       switch (direction) {
         case 'R':
-	  coords.first = wire1.at(wire1.size() - 1).first;
-	  coords.second = wire1.at(wire1.size() - 1).second + 1;
+	  std::get<0>(coords) = std::get<0>(wire1.at(wire1.size() - 1));
+	  std::get<1>(coords) = std::get<1>(wire1.at(wire1.size() - 1)) + 1;
 	  break;
 	case 'L':
-	  coords.first = wire1.at(wire1.size() - 1).first;
-	  coords.second = wire1.at(wire1.size() - 1).second - 1;
+	  std::get<0>(coords) = std::get<0>(wire1.at(wire1.size() - 1));
+	  std::get<1>(coords) = std::get<1>(wire1.at(wire1.size() - 1)) - 1;
 	  break;
 	case 'U':
-	  coords.first = wire1.at(wire1.size() - 1).first + 1;
-	  coords.second = wire1.at(wire1.size() - 1).second;
+	  std::get<0>(coords) = std::get<0>(wire1.at(wire1.size() - 1)) + 1;
+	  std::get<1>(coords) = std::get<1>(wire1.at(wire1.size() - 1));
 	  break;
 	case 'D':
-	  coords.first = wire1.at(wire1.size() - 1).first - 1;
-	  coords.second = wire1.at(wire1.size() - 1).second;
+	  std::get<0>(coords) = std::get<0>(wire1.at(wire1.size() - 1)) - 1;
+	  std::get<1>(coords) = std::get<1>(wire1.at(wire1.size() - 1));
 	  break;
       }
+      std::get<2>(coords) = std::get<2>(wire1.at(wire1.size() - 1)) + 1;
       //printf("%d %d\n", coords.first, coords.second);
       wire1.push_back(coords);
     }
@@ -48,26 +51,27 @@ int main() {
     file >> direction >> distance >> delim;
     //printf("Instr: %c %d %c\n", direction, distance, delim);
     for (int i = 0; i < distance; ++i) {
-      std::pair<int, int> coords;
+      std::tuple<int, int, int> coords;
       switch (direction) {
         case 'R':
-	  coords.first = wire2.at(wire2.size() - 1).first;
-	  coords.second = wire2.at(wire2.size() - 1).second + 1;
+	  std::get<0>(coords) = std::get<0>(wire2.at(wire2.size() - 1));
+	  std::get<1>(coords) = std::get<1>(wire2.at(wire2.size() - 1)) + 1;
 	  break;
 	case 'L':
-	  coords.first = wire2.at(wire2.size() - 1).first;
-	  coords.second = wire2.at(wire2.size() - 1).second - 1;
+	  std::get<0>(coords) = std::get<0>(wire2.at(wire2.size() - 1));
+	  std::get<1>(coords) = std::get<1>(wire2.at(wire2.size() - 1)) - 1;
 	  break;
 	case 'U':
-	  coords.first = wire2.at(wire2.size() - 1).first + 1;
-	  coords.second = wire2.at(wire2.size() - 1).second;
+	  std::get<0>(coords) = std::get<0>(wire2.at(wire2.size() - 1)) + 1;
+	  std::get<1>(coords) = std::get<1>(wire2.at(wire2.size() - 1));
 	  break;
 	case 'D':
-	  coords.first = wire2.at(wire2.size() - 1).first - 1;
-	  coords.second = wire2.at(wire2.size() - 1).second;
+	  std::get<0>(coords) = std::get<0>(wire2.at(wire2.size() - 1)) - 1;
+	  std::get<1>(coords) = std::get<1>(wire2.at(wire2.size() - 1));
 	  break;
       }
-      //printf("%d %d\n", coords.first, coords.second);
+      std::get<2>(coords) = std::get<2>(wire2.at(wire2.size() - 1)) + 1;
+      //printf("%d %d\n", std::get<0>(coords), std::get<1>(coords));
       wire2.push_back(coords);
     }
   } while (delim == ',' && !file.eof());
@@ -75,18 +79,38 @@ int main() {
   std::sort(wire1.begin(), wire1.end());
   std::sort(wire2.begin(), wire2.end());
   printf("done sorting\n");
-  std::vector<std::pair<int, int>> intersection(wire1.size() + wire2.size());
-  std::vector<std::pair<int, int>>::iterator it;
-  it = std::set_intersection(wire1.begin(), wire1.end(), wire2.begin(), wire2.end(), intersection.begin());
-  intersection.resize(it - intersection.begin());
-  for (it = intersection.begin(); it != intersection.end(); ++it) {
-    //printf("%d %d\n", it->first, it->second);
+  std::vector<std::tuple<int, int, int>> intersection;
+  std::vector<std::tuple<int, int, int>>::iterator it1 = wire1.begin();
+  std::vector<std::tuple<int, int, int>>::iterator it2 = wire2.begin();
+  while (it1 != wire1.end() && it2 != wire2.end()) {
+    std::pair<int, int> pair1(std::get<0>(*it1), std::get<1>(*it1));
+    std::pair<int, int> pair2(std::get<0>(*it2), std::get<1>(*it2));
+    if (pair1 < pair2) {
+      ++it1;
+    } else if (pair2 < pair1) {
+      ++it2;
+    } else {
+      std::tuple<int, int, int> coords;
+      std::get<0>(coords) = std::get<0>(*it1);
+      std::get<1>(coords) = std::get<1>(*it1);
+      std::get<2>(coords) = std::get<2>(*it1) + std::get<2>(*it2);
+      intersection.push_back(coords);
+      //printf("%d %d %d\n", std::get<0>(coords), std::get<1>(coords), std::get<2>(coords));
+      ++it1;
+      ++it2;
+    }
   }
+
   std::vector<int> candidates;
-  for (it = intersection.begin(); it <= intersection.end(); ++it) {
-    candidates.push_back(std::abs(it->first) + std::abs(it->second));
-    //printf(" candidate: %d\n", candidates[candidates.size() - 1]);
+  int min_distance = INT_MAX;
+  for (it1 = intersection.begin(); it1 != intersection.end(); ++it1) {
+    candidates.push_back(std::abs(std::get<0>(*it1)) + std::abs(std::get<1>(*it1)));
+    if (std::get<2>(*it1) < min_distance && std::get<2>(*it1) > 0) {
+      min_distance = std::get<2>(*it1);
+    }
+    //printf(" candidate: %d %d\n", std::get<0>(*it1), std::get<1>(*it1));
   }
   std::sort(candidates.begin(), candidates.end());
-  printf("%d\n", candidates[2]);
+  printf("Part 1: %d\n", candidates[1]);
+  printf("Part 2: %d\n", min_distance);
 }
