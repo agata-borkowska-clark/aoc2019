@@ -17,7 +17,7 @@ int main() {
   std::map<std::string, body*> map;
   std::fstream file("input.txt");
   std::string line;
-  int line_num = 0;
+  //int line_num = 0;
   while(std::getline(file, line)) {
     std::string object_a_name = line.substr(0, 3);
     std::string object_b_name = line.substr(4, 3);
@@ -31,7 +31,7 @@ int main() {
     object_a = map.find(object_a_name);
     
     if (object_a->first == "COM") {
-      std::cout << "CoM found at line " << line_num << "\n";
+      //std::cout << "CoM found at line " << line_num << "\n";
       com = object_a->second;
     }
     auto object_b = map.find(object_b_name);
@@ -47,10 +47,10 @@ int main() {
     }
     map.find(object_a_name)->second->orbitters.push_back(map.find(object_b_name)->second);
   }
-  std::cout << "File parsed\n";
+  //std::cout << "File parsed\n";
   std::queue<body*> to_process;
   for (auto const object : com->orbitters) {
-    std::cout << "Orbitters of CoM\n" << object->orbit_count << '\n';
+    //std::cout << "Orbitters of CoM\n" << object->orbit_count << '\n';
     object->orbit_count = 1;
     for (auto o : object->orbitters) {
       to_process.push(o);
