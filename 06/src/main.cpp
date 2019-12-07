@@ -69,4 +69,26 @@ int main() {
     sum += o.second->orbit_count;
   }
   std::cout << "Part 1: " << sum << "\n";
+  int your_body_count = map.find("YOU")->second->orbit_count;
+  int santa_body_count = map.find("SAN")->second->orbit_count;
+  body* your_addr = map.find("YOU")->second->parent;
+  body* santa_addr = map.find("SAN")->second->parent;
+  int dist = 0;
+  if (your_body_count > santa_body_count) {
+    dist = your_body_count - santa_body_count;
+    for (int i = 0; i < dist; ++i) {
+      your_addr = your_addr->parent;
+    }
+  } else if (santa_body_count > your_body_count) {
+    dist = santa_body_count - your_body_count;
+    for (int i = 0; i < dist; ++i) {
+      santa_addr = santa_addr->parent;
+    }
+  }
+  while (your_addr != santa_addr) {
+    your_addr = your_addr->parent;
+    santa_addr = santa_addr->parent;
+    dist += 2;
+  }
+  std::cout << "Part 2: " << dist << "\n";
 }
