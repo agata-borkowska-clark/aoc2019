@@ -18,7 +18,7 @@ class intcomputer {
     void queue_input(long input);
     
     // run the program
-    std::vector<long> run(bool exit_on_wait = false);
+    std::vector<long> run();
     // run the program with a single input
     std::vector<long> run(long input);
     // run the program with a list of input values
@@ -37,7 +37,7 @@ class intcomputer {
       EQUALS = 8,
       ADJUST_BASE = 9,
       RETURN = 99
-    }
+    };
 
     std::map<unsigned long, long> local_mem;
     unsigned long relative_base = 0;
@@ -52,7 +52,7 @@ class intcomputer {
     // split instruction into mode and the actual instruction
     std::pair<std::string, long> split_instruction(long i);
     // work out the mode for a parameter at a given location
-    char supply_mode(std::string* mode, int param_index);
+    char supply_mode(std::string mode, int param_index);
     // given a raw parameter and the mode, figure out the value to use
     long obtain_value(long val, char mode);
     // provides an address where the result should be stored
@@ -60,3 +60,4 @@ class intcomputer {
     // perform the instruction at current
     void perform_instruction();
 }
+#endif
