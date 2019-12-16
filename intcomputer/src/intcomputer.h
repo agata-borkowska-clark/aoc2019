@@ -14,17 +14,11 @@ class intcomputer {
     // create an instance of the Integer Computer with a map as the instruction stream
     intcomputer(std::map<unsigned long, long> v);
     
-    // manually move the pointer to an instruction
-    // (calls to this method should be avoided)
-    void set_current(long x);
-    // change the relative base
-    // calls to this method from other classes should be avoided)
-    void set_relative_base(long x);
     // add a value to the input list
     void queue_input(long input);
     
     // run the program
-    std::vector<long> run();
+    std::vector<long> run(bool exit_on_wait = false);
     // run the program with a single input
     std::vector<long> run(long input);
     // run the program with a list of input values
@@ -32,13 +26,37 @@ class intcomputer {
     std::vector<long> run(std::deque<long> input);
 
   private:
+    enum Instruction {
+      ADDITION = 1,
+      MULTIPLICATION = 2,
+      INPUT = 3,
+      OUTPUT = 4,
+      JUMP_TRUE = 5,
+      JUMP_FALSE = 6,
+      LESS_THAN = 7,
+      EQUALS = 8,
+      ADJUST_BASE = 9,
+      RETURN = 99
+    }
+
     std::map<unsigned long, long> local_mem;
     unsigned long relative_base = 0;
     unsigned long current = 0;  // current should always point at an instruction
     std::deque<long> input;
+    std::vector<long> output;
 
+    // manually move the pointer to an instruction
+    void set_current(long x);
+    // change the relative base
+    void set_relative_base(long x);
+    // split instruction into mode and the actual instruction
     std::pair<std::string, long> split_instruction(long i);
+    // work out the mode for a parameter at a given location
     char supply_mode(std::string* mode, int param_index);
+    // given a raw parameter and the mode, figure out the value to use
     long obtain_value(long val, char mode);
+    // provides an address where the result should be stored
+    unsigned long supply_result_location(long val, char mode);
+    // perform the instruction at current
     void perform_instruction();
 }
