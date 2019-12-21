@@ -24,6 +24,9 @@ class intcomputer {
     // run the program with a list of input values
     // It will replace any existing input with the new value.
     std::vector<long> run(std::deque<long> input);
+    
+    // check, if the program terminated or is waiting for input
+    bool is_done();
 
   private:
     enum Instruction {
@@ -45,6 +48,15 @@ class intcomputer {
       RELATIVE = '2'
     };
 
+    enum ReturnCode {
+      IN_PROGRESS = -1,
+      SUCCESS = 0,
+      WRONG_INSTR = 1,
+      WAITING = 2
+    };
+
+    bool done = false;
+
     std::map<unsigned long, long> local_mem;
     unsigned long relative_base = 0;
     unsigned long current = 0;  // current should always point at an instruction
@@ -63,6 +75,8 @@ class intcomputer {
     long obtain_value(long val, char mode);
     // provides an address where the result should be stored
     unsigned long supply_result_location(long val, char mode);
+    // mark the program as finished
+    void finish_run();
     // perform the instruction at current
     int perform_instruction();
 };

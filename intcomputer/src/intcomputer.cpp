@@ -1,7 +1,7 @@
 #include "intcomputer.h"
 
 intcomputer::intcomputer(std::vector<long> v) {
-  for (int i = 0; i < (int) v.size(); ++i) {
+  for (size_t i = 0; i < v.size(); ++i) {
     intcomputer::local_mem[i] = v[i];
   }
 }
@@ -11,8 +11,9 @@ intcomputer::intcomputer(std::map<unsigned long, long> m) {
 }
 
 std::vector<long> intcomputer::run() {
-  while (current < local_mem.size()) {
-    intcomputer::perform_instruction();
+  int code = IN_PROGRESS;
+  while (current < local_mem.size() && code == IN_PROGRESS) {
+    code = intcomputer::perform_instruction();
   }
   return output;
 }
@@ -31,6 +32,9 @@ void intcomputer::queue_input(long input) {
   this->input.push_back(input);
 }
 
+bool intcomputer::is_done() {
+  return done;
+}
 
 void intcomputer::set_current(long x) {
   current = x;
@@ -59,7 +63,7 @@ char intcomputer::supply_mode(std::string mode, int param_index) {
 
 long intcomputer::obtain_value(long val, char mode) {
   switch (mode) {
-    case POSITION:\
+    case POSITION:
       return local_mem[val];
     case IMMEDIATE:
       return val;
@@ -74,6 +78,10 @@ long intcomputer::obtain_value(long val, char mode) {
 unsigned long intcomputer::supply_result_location(long val, char mode) {
   unsigned long location = mode == '0' ? (unsigned long) val : this->relative_base + (unsigned long) val;
   return location;
+}
+
+void intcomputer::finish_run() {
+  done = true;
 }
 
 int intcomputer::perform_instruction() {
@@ -98,6 +106,9 @@ int intcomputer::perform_instruction() {
       current += 4;
       break;
     case INPUT:
+      if (intcomputer::input.size() == 0) {
+        return WAITING;
+      }
       loc = supply_result_location(local_mem[current + 1], supply_mode(mode_instr_pair.first, 1));
       local_mem[loc] = intcomputer::input.front();
       intcomputer::input.pop_front();
@@ -152,14 +163,16 @@ int intcomputer::perform_instruction() {
       current += 2;
       break;
     case RETURN:
-      std::cout << "Program completed run\n";
-      current += intcomputer::local_mem.size();
+      //std::cout << "Program completed run\n";
+      // current += intcomputer::local_mem.size();
+      finish_run();
+      return SUCCESS;
       break;
     default:
       std::cout << "Something went wrong; instruction not matched: " << mode_instr_pair.second << "\n";
       current += intcomputer::local_mem.size();
-      return 1;
+      return WRONG_INSTR;
       break;
   }
-  return 0;
+  return IN_PROGRESS;
 }
