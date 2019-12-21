@@ -39,6 +39,12 @@ class intcomputer {
       RETURN = 99
     };
 
+    enum Mode {
+      POSITION = '0',
+      IMMEDIATE = '1',
+      RELATIVE = '2'
+    };
+
     std::map<unsigned long, long> local_mem;
     unsigned long relative_base = 0;
     unsigned long current = 0;  // current should always point at an instruction
@@ -58,6 +64,6 @@ class intcomputer {
     // provides an address where the result should be stored
     unsigned long supply_result_location(long val, char mode);
     // perform the instruction at current
-    void perform_instruction();
-}
+    int perform_instruction();
+};
 #endif

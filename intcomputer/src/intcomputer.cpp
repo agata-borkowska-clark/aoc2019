@@ -1,29 +1,29 @@
 #include "intcomputer.h"
 
-intcomputer::intcomputer(std::vector<long>* v) {
-  for (int i = 0; i < v.size(); ++i) {
-    local_mem[i] = v[i];
+intcomputer::intcomputer(std::vector<long> v) {
+  for (int i = 0; i < (int) v.size(); ++i) {
+    intcomputer::local_mem[i] = v[i];
   }
 }
 
-intcomputer::intcomputer(std::map<unsigned long, long>* m) {
-  local_mem = *m;
+intcomputer::intcomputer(std::map<unsigned long, long> m) {
+  intcomputer::local_mem = m;
 }
 
 std::vector<long> intcomputer::run() {
   while (current < local_mem.size()) {
-    // perform instructions
+    intcomputer::perform_instruction();
   }
   return output;
 }
 
 std::vector<long> intcomputer::run(long  input) {
-  this->input = new std::deque<long>(1, input);
+  intcomputer::input.push_back(input);
   return run();
 }
 
 std::vector<long> intcomputer::run(std::deque<long> input) {
-  this->input = input;
+  this->intcomputer::input = {input};
   return run();
 }
 
@@ -59,15 +59,15 @@ char intcomputer::supply_mode(std::string mode, int param_index) {
 
 long intcomputer::obtain_value(long val, char mode) {
   switch (mode) {
-    case '0':
+    case POSITION:\
       return local_mem[val];
-    case '1':
+    case IMMEDIATE:
       return val;
-    case '2':
+    case RELATIVE:
       return local_mem[val + relative_base];
     default:
       std::cout << "incorrect mode provided: " << mode << "\n";
-      return 0l;
+      return 1l;
   }
 }
 
@@ -76,16 +76,18 @@ unsigned long intcomputer::supply_result_location(long val, char mode) {
   return location;
 }
 
-void intcomputer::perform_instruction() {
+int intcomputer::perform_instruction() {
   // get instruction and mode
-  std::pair<std::string, long> mode_instr_pair = split_instruction(*current);
+  std::pair<std::string, long> mode_instr_pair = split_instruction(local_mem[current]);
   long param1, param2, result;
+  unsigned long loc;
   switch (mode_instr_pair.second) {
     case ADDITION:
       param1 = obtain_value(local_mem[current + 1], supply_mode(mode_instr_pair.first, 1));
       param2 = obtain_value(local_mem[current + 2], supply_mode(mode_instr_pair.first, 2));
       result = param1 + param2;
-      local_mem[supply_result_location(local_mem[current + 3], supply_mode(mode_instr_pair.first, 3))] = result;
+      loc = intcomputer::supply_result_location(local_mem[current + 3], supply_mode(mode_instr_pair.first, 3));
+      local_mem[loc] = result;
       current += 4;
       break;
     case MULTIPLICATION:
@@ -96,8 +98,9 @@ void intcomputer::perform_instruction() {
       current += 4;
       break;
     case INPUT:
-      param1 = obtain_value(local_mem[current + 1], supply_mode(mode_instr_pair.first, 1));
-      local_mem[param1] = input.pop_front();
+      loc = supply_result_location(local_mem[current + 1], supply_mode(mode_instr_pair.first, 1));
+      local_mem[loc] = intcomputer::input.front();
+      intcomputer::input.pop_front();
       current += 2;
       break;
     case OUTPUT:
@@ -150,9 +153,13 @@ void intcomputer::perform_instruction() {
       break;
     case RETURN:
       std::cout << "Program completed run\n";
+      current += intcomputer::local_mem.size();
       break;
     default:
       std::cout << "Something went wrong; instruction not matched: " << mode_instr_pair.second << "\n";
+      current += intcomputer::local_mem.size();
+      return 1;
       break;
   }
+  return 0;
 }
