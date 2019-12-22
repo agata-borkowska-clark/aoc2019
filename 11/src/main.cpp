@@ -53,9 +53,10 @@ int main() {
   bool finished = false;
   std::pair<int, int> location(0, 0);
   std::vector<long> output;
+  hull[location] = '-';
   while (!finished) {
     long input = 0L;
-    if (hull[{location.first, location.second}] == '#') {
+    if (hull[location] == '#') {
       input = 1L;
       std::cout<< "white square\n";
     } else {
@@ -67,7 +68,7 @@ int main() {
     if (finished) {
       break;
     }
-    hull.emplace(location, output[0] == 0 ? '-' : '#');
+    hull[location] = output[0] == 0 ? '-' : '#';
     std::cout << "loc " << location.first << " " << location.second << " painted " << hull[{location.first, location.second}] << "\n";
     robot.consume_output();
     facing = (facing + 4 + (output[1] == 0 ? -1 : 1)) % 4;
