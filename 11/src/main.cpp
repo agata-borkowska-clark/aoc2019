@@ -67,10 +67,10 @@ int main() {
     if (finished) {
       break;
     }
-    hull[{location.first, location.second}] = output[0] == 0 ? '-' : '#';
-    std::cout << "output " << output[0] << " " << output[1] << " painted " << hull[{location.first, location.second}] << "\n";
+    hull.emplace(location, output[0] == 0 ? '-' : '#');
+    std::cout << "loc " << location.first << " " << location.second << " painted " << hull[{location.first, location.second}] << "\n";
     robot.consume_output();
-    facing = (facing + output[1] == 0 ? -1 : 1) % 4;
+    facing = (facing + 4 + (output[1] == 0 ? -1 : 1)) % 4;
     robot.consume_output();
     location = move_robot(location, facing);
   }
