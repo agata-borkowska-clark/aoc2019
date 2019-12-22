@@ -23,4 +23,5 @@ int main() {
     }
   }
   std::cout << "Part 1: " << block_count << "\n";
+  original[0] = 2;
 }
