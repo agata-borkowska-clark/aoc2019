@@ -106,7 +106,8 @@ int intcomputer::perform_instruction() {
       param1 = obtain_value(local_mem[current + 1], supply_mode(mode_instr_pair.first, 1));
       param2 = obtain_value(local_mem[current + 2], supply_mode(mode_instr_pair.first, 2));
       result = param1 * param2;
-      local_mem[supply_result_location(local_mem[current + 3], supply_mode(mode_instr_pair.first, 3))] = result;
+      loc = intcomputer::supply_result_location(local_mem[current + 3], supply_mode(mode_instr_pair.first, 3));
+      local_mem[loc] = result;
       current += 4;
       break;
     case INPUT:
