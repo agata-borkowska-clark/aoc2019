@@ -53,7 +53,11 @@ int main() {
   bool finished = false;
   std::pair<int, int> location(0, 0);
   std::vector<long> output;
-  hull[location] = '-';
+  hull[location] = '#';
+  int min_up = 0;
+  int min_left = 0;
+  int max_down = 0;
+  int max_right = 0;
   while (!finished) {
     long input = 0L;
     if (hull[location] == '#') {
@@ -74,6 +78,30 @@ int main() {
     facing = (facing + 4 + (output[1] == 0 ? -1 : 1)) % 4;
     robot.consume_output();
     location = move_robot(location, facing);
+    if (location.first < min_up) {
+      min_up = location.first;
+    }
+    if (location.second < min_left) {
+      min_left = location.second;
+    }
+    if (location.first > max_down) {
+      max_down = location.first;
+    }
+    if (location.second > max_right) {
+      max_right = location.second;
+    }
   }
-  std::cout << "Part 1 " << hull.size() << "\n";
+  //std::cout << "Part 1 " << hull.size() << "\n";
+  std::cout << min_up << " " << min_left << " " << max_down << " " << max_right << "\n";
+  char grid[6][43];
+  for (auto pair : hull) {
+    grid[pair.first.first][pair.first.second] = pair.second;
+  }
+  for (int i = 0; i <= 5; ++i) {
+    for (int j = 0; j <= 42; ++j) {
+      char c = grid[i][j] == '#' ? '#' : '-';
+      std::cout << c;
+    }
+    std::cout << "\n";
+  }
 }
