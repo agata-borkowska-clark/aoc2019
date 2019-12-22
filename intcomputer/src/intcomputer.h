@@ -25,6 +25,8 @@ class intcomputer {
     // It will replace any existing input with the new value.
     std::vector<long> run(std::deque<long> input);
     
+    // Use up the first value in the output vector (remove it from int comp)
+    void consume_output();
     // check, if the program terminated or is waiting for input
     bool is_done();
 

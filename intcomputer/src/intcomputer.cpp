@@ -32,6 +32,10 @@ void intcomputer::queue_input(long input) {
   this->input.push_back(input);
 }
 
+void intcomputer::consume_output() {
+  output.erase(output.begin());
+}
+
 bool intcomputer::is_done() {
   return done;
 }

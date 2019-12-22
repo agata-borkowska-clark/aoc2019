@@ -57,14 +57,19 @@ int main() {
     while (!finished) {
       ampA.queue_input(result);
       result = ampA.run()[0];
+      ampA.consume_output();
       ampB.queue_input(result);
       result = ampB.run()[0];
+      ampB.consume_output();
       ampC.queue_input(result);
       result = ampC.run()[0];
+      ampC.consume_output();
       ampD.queue_input(result);
       result = ampD.run()[0];
+      ampD.consume_output();
       ampE.queue_input(result);
       result = ampE.run()[0];
+      ampE.consume_output();
 
       finished = ampE.is_done();
     }
