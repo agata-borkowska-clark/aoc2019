@@ -3,7 +3,7 @@
 #include <string>
 
 bool coprime(int i, int j) {
-  // std::cout << "coprime: " << i << " " << j << "\n";
+  //std::cout << "coprime: " << i << " " << j << "\n";
   while (i != 0 && j != 0) {
     if (i > j) {
       i %= j;
@@ -12,7 +12,7 @@ bool coprime(int i, int j) {
     }
   }
   int result = i > j ? i : j;
-  // std::cout << "GCD " << result << "\n";
+  //std::cout << "GCD " << result << "\n";
   return result == 1;
 };
 
@@ -42,8 +42,8 @@ int count_asteroids(const std::string map[], int y, int x) {
       break;
     }
   }
-  for (int i = 1; i < 43; ++i) {
-    for (size_t j = 1; j < map[i].size(); ++j) {
+  for (int i = 1; y + i < 43; ++i) {
+    for (size_t j = 1; x + j < map[i].size(); ++j) {
       if (!coprime(i, j)) {
         continue;
       }
