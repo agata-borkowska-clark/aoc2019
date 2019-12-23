@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+constexpr unsigned long TRILLION = 1000000000000;
 struct Ingredient {
   std::string name;
   long quantity;
@@ -40,7 +41,7 @@ std::pair<std::string, std::pair<long, std::vector<Ingredient>>> parse_reaction(
   return std::make_pair(chemical, std::make_pair(quantity, ingredients));
 }
 
-long ore_needed(std::string chemical, long quantity, const Cookbook& reactions, std::map<std::string, long> & excess) {
+long ore_needed(std::string chemical, long quantity, const Cookbook& reactions, std::map<std::string, long>& excess) {
   //std::cout << "need " << quantity << " of " << chemical << "\n";
   if (excess.find(chemical) != excess.end()) {
     long excess_quantity = excess.find(chemical)->second;
@@ -76,7 +77,7 @@ long ore_needed(std::string chemical, long quantity, const Cookbook& reactions, 
 }
 
 unsigned long bin_search(unsigned long a, unsigned long b, const Cookbook& reactions) {
-  if (a == b) {
+  if (a + 1 == b) {
     return a;
   }
   unsigned long mid = a + (b - a) / 2;
@@ -85,9 +86,9 @@ unsigned long bin_search(unsigned long a, unsigned long b, const Cookbook& react
   if (mid_fuel == TRILLION) {
     return mid_fuel;
   } else if (mid_fuel < TRILLION) {
-    return bin_search(mid_fuel, b, reactions);
+    return bin_search(mid, b, reactions);
   } else {
-    return bin_search(a, mid_fuel, reactions);
+    return bin_search(a, mid, reactions);
   }
 }
 
@@ -103,6 +104,7 @@ int main() {
   std::map<std::string, long> excess;
   long ore = ore_needed("FUEL", 1, reactions, excess);
   std::cout << "Part 1: " << ore << "\n";
+  unsigned long div = TRILLION / ore;
   //std::cout << "Part 2: " << div << " needs " << div * ore + ore << " ore\n";
-  std::cout << "Part 2: " << bin_search(div, div * 100, reactions) << "\n"; 
+  std::cout << "Part 2: " << bin_search(div, div * 100L, reactions) << "\n"; 
 }
