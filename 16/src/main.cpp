@@ -5,16 +5,16 @@
 #include <vector>
 
 int do_the_thing(std::vector<int> input, std::vector<int> pattern) {
-  int sum = 0;
+  long sum = 0;
   for (size_t i = 0; i < input.size(); ++i) {
     int mult = input[i] * pattern[(i + 1) % pattern.size()];
     //std::cout << "Mult: " << mult << " for i: " << (i + 1) % pattern.size() << " input: " << input[i] << " pattern " << pattern[(i + 1) % pattern.size()] << '\n';
     sum += mult;
-    sum %= 10;
+    
   }
   sum = std::abs(sum);
   //std::cout << "sum: " << sum << "\n";
-  return sum;
+  return (int) (sum % 10);
 };
 
 std::vector<int> update_pattern(std::vector<int> pattern) {
@@ -45,7 +45,7 @@ int main() {
   pattern.push_back(-1);
   std::vector<int> original_pattern = pattern;
   std::vector<int> output;
-  for (int it = 0; it < 99; ++it) {
+  for (int it = 0; it < 100; ++it) {
     //std::cout << "PHASE: " << it << '\n';
     for (size_t digit = 0; digit < input.size(); ++digit) {
       output.push_back(do_the_thing(input, pattern));
